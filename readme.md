@@ -41,7 +41,7 @@ outputs:
     at new CustomError (/home/phil/code/sticky/errors.js:15:27)
     at null._onTimeout (/home/phil/code/sticky/run-one.js:45:25)
     at Timer.listOnTimeout (timers.js:89:15)
-FAILED in 19.19s :(
+FAILED in 1.919s :(
 ```
 
 

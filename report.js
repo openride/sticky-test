@@ -1,7 +1,7 @@
 /*eslint-disable no-console*/
 
 const exitErr = dt => {
-  console.log(`FAILED in ${dt / 100}s :(`);
+  console.log(`FAILED in ${dt / 1000}s :(`);
   process.exit(1);
 };
 
