@@ -36,7 +36,7 @@ const runOne = timeout => spec => {
   const incrAssertions = () => assertionsRecorded += 1;
 
   return new Promise((resolve, reject) => {
-    console.log(`-> ${spec.name} (${spec.plan})`);
+    console.log(`→ ${spec.name} (${spec.plan})`);
     const rejectWithLabel = err => reject([spec.name, err]);
     const testAsserter = stickyAssert(incrAssertions, rejectWithLabel);
 

@@ -31,8 +31,8 @@ test(0, 'This test takes FOR EVVVVVVER', () => new Promise(resolve =>
 outputs:
 
 ```
--> Off to the races (1)
--> This test takes FOR EVVVVVVER (0)
+→ Off to the races (1)
+→ This test takes FOR EVVVVVVER (0)
 1 tests failed :(
 × This test takes FOR EVVVVVVER
   Test rejected with TestTimeout (Test timed out)
