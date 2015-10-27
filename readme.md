@@ -1,8 +1,8 @@
 # Sticky
 
-Promise-first testing.
+Promise-first testing with no surprises.
 
-If your test runs synchronously, just write it:
+#### If your test runs synchronously, just write it:
 
 ```js
 const sticky = require('sticky');
@@ -12,18 +12,38 @@ test(1, 'Department of redundancies department', assert => {
 });
 ```
 
-If it's async, just return a promise:
+#### If it's async, just return a promise:
 
 ```js
 const sticky = require('sticky');
 const test = sticky({timeout: 1000});
+
 test(1, 'Off to the races', assert => new Promise(resolve =>
   setTimeout(() => {
     assert(true, 'One day sticky will output in tap format');
-  }, 900);
-));
-test(0, 'This test takes FOR EVVVVVVER', new Promise(() => null));
+    resolve();
+  }, 900)));
+
+test(0, 'This test takes FOR EVVVVVVER', () => new Promise(resolve =>
+  null));  // `resolve` never gets called so this test times out
 ```
+
+outputs:
+
+```
+-> Off to the races (1)
+-> This test takes FOR EVVVVVVER (0)
+1 tests failed :(
+× This test takes FOR EVVVVVVER
+  Test rejected with TestTimeout (Test timed out)
+  TestTimeout
+    at CustomError.Error (native)
+    at new CustomError (/home/phil/code/sticky/errors.js:15:27)
+    at null._onTimeout (/home/phil/code/sticky/run-one.js:45:25)
+    at Timer.listOnTimeout (timers.js:89:15)
+FAILED in 19.19s :(
+```
+
 
 ## API
 
