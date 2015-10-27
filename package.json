@@ -1,0 +1,10 @@
+{
+  "name": "sticky",
+  "version": "0.0.0",
+  "description": "Tape-inspired test framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test-sticky.js"
+  },
+  "license": "None"
+}
