@@ -4,7 +4,13 @@
   "description": "Tape-inspired test framework",
   "main": "index.js",
   "scripts": {
-    "test": "node test-sticky.js"
+    "lint": "eslint *.js",
+    "test": "node test-sticky.js",
+    "posttest": "npm run lint"
   },
-  "license": "None"
+  "license": "None",
+  "devDependencies": {
+    "babel-eslint": "^4.1.3",
+    "eslint": "^1.8.0"
+  }
 }
