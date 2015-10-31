@@ -2,11 +2,11 @@
 'use strict';
 
 const assert = require('assert');
-const errors = require('./errors.js');
-const stickyAssert = require('./sticky-assert.js');
-const runOne = require('./run-one.js');
-const runTests = require('./run-tests.js');
-const poll = require('./poll.js');
+const errors = require('../src/errors.js');
+const stickyAssert = require('../src/sticky-assert.js');
+const runOne = require('../src/run-one.js');
+const runTests = require('../src/run-tests.js');
+const poll = require('../src/poll.js');
 
 
 const logErr = hint => err => {

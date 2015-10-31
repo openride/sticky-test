@@ -2,10 +2,10 @@
   "name": "sticky-test",
   "version": "0.0.0",
   "description": "Tape-inspired test framework",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "lint": "eslint *.js",
-    "test": "node test-sticky.js",
+    "lint": "eslint '**/*.js'",
+    "test": "node test-sticky/test.js",
     "posttest": "npm run lint"
   },
   "license": "None",
