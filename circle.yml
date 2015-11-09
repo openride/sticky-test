@@ -1,0 +1,11 @@
+machine:
+  node:
+    version: 4.2.1
+
+deployment:
+  release:
+    tag: /v\d+\.\d+\.\d+(\-.*)?/
+    owner: openride
+    commands:
+      - echo $NPMRC_CONTENTS > ~/.npmrc
+      - npm publish
