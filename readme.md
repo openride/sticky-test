@@ -1,4 +1,4 @@
-# Sticky
+# Sticky [![Circle CI](https://circleci.com/gh/openride/sticky-test.svg?style=svg&circle-token=a856c098830ab94cd2cd6d7455b3738766a74d47)](https://circleci.com/gh/openride/sticky-test)
 
 Promise-first testing with no surprises.
 
