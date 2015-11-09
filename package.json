@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Tape-inspired test framework",
   "main": "src/index.js",
+  "repository": "https://github.com/openride/sticky-test",
   "scripts": {
     "lint": "eslint '**/*.js'",
     "test": "node test-sticky/test.js",
