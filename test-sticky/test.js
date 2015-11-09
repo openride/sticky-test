@@ -180,6 +180,11 @@ const logErr = hint => err => {
     })
     .catch(logErr('1 fail 2 tests'));
 
+  runTests(getter([]), 0, null, true)
+    .then(() => assert.fail(null, null, 'Should have failed with no tests when failIfNoTests'))
+    .catch(details => assert.ok(details.err instanceof errors.NoTests, `Should have thrown a NoTests()`))
+    .catch(logErr('fail no tests'));
+
 })();
 
 

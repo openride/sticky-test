@@ -26,11 +26,13 @@ function customError(name, defaultMessage) {
 }
 
 
+const NoTests = customError('NoTests', 'Test were expected but none were registered');
 const PollTimeout = customError('PollTimeout', 'Polling timed out');
 const TestTimeout = customError('TestTimeout', 'Test timed out');
 const TestPlanError = customError('TestPlanError');
 
 module.exports = {
+  NoTests,
   PollTimeout,
   TestTimeout,
   TestPlanError

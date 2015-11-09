@@ -33,6 +33,8 @@ const getOpt = (obj, k, def, validate) => {
  * @param {number?} options.timeout How long (in ms) to let a test run before
  * failing the test. Default to 100. -1 will wait forever.
  * @param {number?} options.registerTimeout How long (in ms) to wait to see if
+ * @param {bool?} options.failIfNoTests Should the suite fail if no tests
+ * register? Default: false.
  * more tests will be registered before ending. Default: 5.
  * @returns {func} A function for registering new tests
  */
@@ -40,12 +42,13 @@ const harness = (options) => {
   // options validation
   const timeout = getOpt(options, 'timeout', 100, t => (t >= 0 || t === -1));
   const registerTimeout = getOpt(options, 'registerTimeout', 5, t => t >= 0);
+  const failIfNoTests = getOpt(options, 'failIfNoTests', false, () => true);
 
   // harness setup
   const testQueue = [];
   const test = (plan, name, testFn) => testQueue.push({ plan, name, testFn });
   const getNext = () => testQueue.shift();
-  runTests(getNext, registerTimeout, runOne(timeout))
+  runTests(getNext, registerTimeout, runOne(timeout), failIfNoTests)
     .then(report.ok, report.fail);
 
   // test registrator for user
