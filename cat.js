@@ -70,7 +70,14 @@ const withResource = (setup, teardown) => lendTask => {
 };
 
 
-test(1, 'Use works with id', assert => use(id)(() => assert.ok('got to run a test')));
+const nodeCB = lendTask =>
+  new Promise((resolve, reject) =>
+    lendTask([
+      err => err ? reject(err) : resolve()
+    ]));
+
+
+test(1, 'Use works with id', assert => use(id)(() => assert.ok('ran a test')));
 
 test(1, 'Throwing test rejects', assert => {
   const theError = new Error('thrown from test');
@@ -183,3 +190,14 @@ test(2, 'teardown runs if timeout rejects the tests', assert => use(compose(
   timeout(1)
 ))(() => new Promise(resolve => setTimeout(resolve, 20)))
   .catch(() => assert.ok('test timed out')));
+
+test(1, 'node callback test style works', assert => use(nodeCB)(cb => setTimeout(() => {
+  assert.ok(true, 'ran test');
+  cb();
+}, 1)));
+
+test(1, 'node callback style can error', assert => {
+  const theError = new Error('test error');
+  return use(nodeCB)(cb => setTimeout(() => cb(theError), 1))
+    .catch(err => assert.strictEqual(err, theError, 'should reject with the test error'));
+});
