@@ -38,7 +38,8 @@ const use = enhancer =>
         .then(resources =>
           testFn.apply(null, resources))
         .then(
-          testStream => testStream.pipe(result),
+          testStream =>
+            testStream.pipe(result),
           err => {
             result.push(mkErr(err));
             result.end();

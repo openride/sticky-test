@@ -6,7 +6,7 @@
   "repository": "https://github.com/openride/sticky-test",
   "scripts": {
     "lint": "eslint '**/*.js'",
-    "test": "node test-sticky/test.js",
+    "test": "find . | grep '__test__/test.*.js' | xargs -I_ -n1 bash -c 'echo \"\n_\"; node _'",
     "posttest": "npm run lint"
   },
   "license": "None",
