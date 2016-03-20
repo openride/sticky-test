@@ -38,7 +38,7 @@ const interceptThrow = onFail => fn => function(/*arguments*/) {
  * @returns {func} The wrapped function, basically a proxy
  */
 const spyOnCalls = sideCb => fn => function(/*arguments*/) {
-  sideCb();
+  sideCb(Array.prototype.slice.apply(arguments));
   return fn.apply(null, arguments);
 };
 
@@ -61,8 +61,12 @@ const stickyAssert = (notifyCb, onFail) => {
       wrappedAssert[prop] = wrapper(assert[prop]);
     });
   wrappedAssert.AssertionError = assert.AssertionError;
+  wrappedAssert.ifError = (test, message) =>
+    wrappedAssert.ok(!test, message);
+  wrappedAssert.pass = msg =>
+    wrappedAssert.ok(true, msg);
   wrappedAssert.fail = msg =>
-    interceptThrow(onFail)(assert.fail)(null, null, msg);
+    wrappedAssert.ok(false, msg);
   return wrappedAssert;
 };
 
