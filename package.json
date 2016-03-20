@@ -15,6 +15,7 @@
     "eslint": "^1.8.0"
   },
   "dependencies": {
+    "multipipe": "^0.3.0",
     "through2": "^2.0.1"
   }
 }

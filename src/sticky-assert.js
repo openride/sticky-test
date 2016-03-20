@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require('assert');
 
 
@@ -52,7 +54,7 @@ const spyOnCalls = sideCb => fn => function(/*arguments*/) {
 const stickyAssert = (notifyCb, onFail) => {
   const wrapper = wrap([
     interceptThrow(onFail),
-    spyOnCalls(notifyCb)
+    spyOnCalls(notifyCb),
   ]);
   const wrappedAssert = wrapper(assert);
   Object.keys(assert)

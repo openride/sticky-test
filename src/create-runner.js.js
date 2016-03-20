@@ -1,9 +1,10 @@
 'use strict';
 
 const assert = require('assert');
-const runOne = require('./run-one.js');
 const runTests = require('./run-tests.js');
-const report = require('./report.js');
+const use = require('./compose.js').use;
+const mkTest = require('./mk-test.js');
+const toTAP = require('./to-tap.js');
 
 
 /**
@@ -33,26 +34,32 @@ const getOpt = (obj, k, def, validate) => {
  * @param {number?} options.timeout How long (in ms) to let a test run before
  * failing the test. Default to 100. -1 will wait forever.
  * @param {number?} options.registerTimeout How long (in ms) to wait to see if
- * @param {bool?} options.failIfNoTests Should the suite fail if no tests
  * register? Default: false.
  * more tests will be registered before ending. Default: 5.
  * @returns {func} A function for registering new tests
  */
-const harness = (options) => {
-  // options validation
-  const timeout = getOpt(options, 'timeout', 100, t => (t >= 0 || t === -1));
+const createRunner = (options) => {
   const registerTimeout = getOpt(options, 'registerTimeout', 5, t => t >= 0);
-  const failIfNoTests = getOpt(options, 'failIfNoTests', false, () => true);
 
-  // harness setup
   const testQueue = [];
-  const test = (plan, name, testFn) => testQueue.push({ plan, name, testFn });
   const getNext = () => testQueue.shift();
-  runTests(getNext, registerTimeout, runOne(timeout), failIfNoTests)
-    .then(report.ok, report.fail);
 
-  // test registrator for user
-  return test;
+  const createTest = getEnhancer => function test(/*arguments*/) {
+    const args = Array.prototype.slice.apply(arguments);
+    const useArgs = args.slice(0, args.length - 1);
+    const testFn = args[args.length - 1];
+    const testUse = use(getEnhancer.apply(null, useArgs));
+    const testWrapped = mkTest(testFn);
+    testQueue.push(() =>
+      testUse(testWrapped));
+  };
+
+  runTests(getNext, registerTimeout)
+    .pipe(toTAP())
+    .pipe(process.stdout);
+
+  return createTest;
 };
 
-module.exports = harness;
+
+module.exports = createRunner;

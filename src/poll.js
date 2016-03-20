@@ -1,7 +1,5 @@
 'use strict';
 
-const PollTimeout = require('./errors.js').PollTimeout;
-
 const POLL_CHECK_TIMEOUT = 1;  // ms
 
 
@@ -12,13 +10,13 @@ const poll = (getNext, timeout) => new Promise((resolve, reject) => {
   if (timeout !== -1) {
     rejectTimer = setTimeout(() => {
       clearTimeout(pollTimer);
-      reject(new PollTimeout());
+      reject(new Error('Poll timed out'));
     }, timeout);
   }
 
   (function check() {
     const next = getNext();
-    if (next !== null && typeof next !== 'undefined') {
+    if (typeof next !== 'undefined') {
       clearTimeout(rejectTimer);
       resolve(next);
     } else {
