@@ -37,15 +37,14 @@ const toTAP = () => {
     function(cb) {
       this.push('');
       this.push(`1..${testCount}`);
-      this.push('');
       cb();
     }
   );
 
-  tapChunks.push('TAP version 13');
+  tapChunks.push('\nTAP version 13');
 
   const breakLines = through2.obj((line, enc, cb) =>
-    cb(null, `\n${line}`));
+    cb(null, `${line}\n`));
 
 
   return pipe(tapChunks, breakLines);
