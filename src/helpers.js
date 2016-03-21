@@ -9,10 +9,14 @@ const mkPass = require('./stream-obj.js').mkPass;
 
 const assert = next => {
   const assertStream = through2.obj();
-  return next([ stickyAssert(
-    args => assertStream.push(mkPass(args.join(', '))),
-    err => assertStream.push(mkErr(err))
-  ) ]).pipe(assertStream);
+  return next([
+    stickyAssert(
+      (ok, description, err) =>
+        assertStream.push(ok ?
+          mkPass(description) :
+          mkErr(err, description))
+    ),
+  ]).pipe(assertStream);
 };
 
 
@@ -24,13 +28,14 @@ const countAsserts = expectedCount => next => {
     }
     cb();
   });
-  return next([ stickyAssert(
-    args => {
-      assertStream.push(mkPass(args.join(', ')));
+  return next([
+    stickyAssert((ok, description, err) => {
       assertCount += 1;
-    },
-    err => assertStream.push(mkErr(err))
-  ) ]).pipe(assertStream);
+      assertStream.push(ok ?
+        mkPass(description) :
+        mkErr(err, description));
+    }),
+  ]).pipe(assertStream);
 };
 
 
