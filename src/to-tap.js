@@ -11,6 +11,8 @@ const escapeNewlines = str =>
 
 const toTAP = () => {
   let testCount = 0;
+  let passing = 0;
+  let failing = 0;
 
   const tapChunks = through2.obj(
     function(chunk, enc, cb) {
@@ -21,9 +23,11 @@ const toTAP = () => {
           .forEach(l => this.push(`# ${l}`));
       } else if (chunk.type === 'pass') {
         testCount += 1;
+        passing += 1;
         this.push(`ok ${testCount} ${escapeNewlines(chunk.msg)}`);
       } else if (chunk.type === 'error') {
         testCount += 1;
+        failing += 1;
         this.push(`not ok ${testCount} ${escapeNewlines(chunk.err.toString())}`);
         this.push('  ---');
         Object.keys(chunk.err).forEach(k =>
@@ -37,6 +41,13 @@ const toTAP = () => {
     function(cb) {
       this.push('');
       this.push(`1..${testCount}`);
+      this.push(`# tests ${testCount}`);
+      if (passing > 0) {
+        this.push(`# pass  ${passing}`);
+      }
+      if (failing > 0) {
+        this.push(`# fail  ${failing}`);
+      }
       cb();
     }
   );

@@ -46,6 +46,7 @@ expect('Base case: no tests', [], `
 TAP version 13
 
 1..0
+# tests 0
 `);
 
 
@@ -57,6 +58,7 @@ TAP version 13
 # Hello
 
 1..0
+# tests 0
 `);
 
 
@@ -67,6 +69,8 @@ TAP version 13
 ok 1 should pass
 
 1..1
+# tests 1
+# pass  1
 `);
 
 
@@ -79,6 +83,8 @@ not ok 1 Error: Bad times
   ...
 
 1..1
+# tests 1
+# fail  1
 `);
 
 
@@ -92,6 +98,8 @@ TAP version 13
 ok 1 should pass
 
 1..1
+# tests 1
+# pass  1
 `);
 
 
@@ -107,6 +115,8 @@ not ok 1 Error: Bad times
   ...
 
 1..1
+# tests 1
+# fail  1
 `);
 
 
@@ -134,6 +144,8 @@ not ok 1 AssertionError: 1 == 2
   ...
 
 1..1
+# tests 1
+# fail  1
 `);
 
 
@@ -156,4 +168,7 @@ not ok 2 Error: Bad times
 ok 3 last one
 
 1..3
+# tests 3
+# pass  2
+# fail  1
 `);
