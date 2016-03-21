@@ -7,6 +7,15 @@ const mkErr = require('./stream-obj.js').mkErr;
 const mkPass = require('./stream-obj.js').mkPass;
 
 
+const assert = next => {
+  const assertStream = through2.obj();
+  return next([ stickyAssert(
+    args => assertStream.push(mkPass(args.join(', '))),
+    err => assertStream.push(mkErr(err))
+  ) ]).pipe(assertStream);
+};
+
+
 const countAsserts = expectedCount => next => {
   let assertCount = 0;
   const assertStream = through2.obj(null, null, cb => {
@@ -15,14 +24,13 @@ const countAsserts = expectedCount => next => {
     }
     cb();
   });
-  const assert = stickyAssert(
+  return next([ stickyAssert(
     args => {
       assertStream.push(mkPass(args.join(', ')));
       assertCount += 1;
     },
     err => assertStream.push(mkErr(err))
-  );
-  return next([ assert ]).pipe(assertStream);
+  ) ]).pipe(assertStream);
 };
 
 
@@ -39,11 +47,6 @@ const inject = what => next =>
 
 const injectFactory = whatFactory => testFn =>
   whatFactory()(testFn);
-
-const peek = pre => through2.obj((chunk, enc, cb) => {
-  console.log(pre || 'peek', chunk);  // eslint-disable-line no-console
-  cb(null, chunk);
-});
 
 
 const timeout = t => next => {
@@ -88,11 +91,11 @@ const withResource = (setup, teardown) => next => {
 
 
 module.exports = {
+  assert,
   countAsserts,
   declare,
   inject,
   injectFactory,
-  peek,
   timeout,
   withResource,
 };
