@@ -3,10 +3,11 @@
 
 const through2 = require('through2');
 const pipe = require('multipipe');
+const YAML = require('yamljs');
 
 
 const escapeNewlines = str =>
-  str.replace('\n', '\\n');
+  String(str).replace('\n', '\\n');
 
 
 const toTAP = () => {
@@ -28,10 +29,14 @@ const toTAP = () => {
       } else if (chunk.type === 'error') {
         testCount += 1;
         failing += 1;
-        this.push(`not ok ${testCount} ${escapeNewlines(chunk.err.toString())}`);
+        this.push(`not ok ${testCount} ${escapeNewlines(chunk.msg)}`);
         this.push('  ---');
-        Object.keys(chunk.err).forEach(k =>
-          this.push(`    ${k}: ${escapeNewlines(chunk.err[k].toString())}`));
+        YAML
+          .stringify(Object.assign({}, chunk.err), 4, 2)
+          .split('\n')
+          .filter(line => line.trim() !== '')
+          .map(line => `    ${line}`)
+          .forEach(indented => this.push(indented));
         this.push('  ...');
       } else {
         throw new Error(`Unrecognized chunk type: '${chunk.type}'`);

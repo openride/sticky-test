@@ -8,6 +8,7 @@ const compose = require('../compose').compose;
 const inject = require('../helpers').inject;
 const injectFactory = require('../helpers').injectFactory;
 const withResource = require('../helpers').withResource;
+const mkErr = require('../stream-obj').mkErr;
 
 
 const test = sticky()((plan, name) => sticky.compose(
@@ -78,7 +79,7 @@ test(6, 'withResource', assert => {
 
   const fails = () => {
     const stream = through2.obj();
-    stream.push({ type: 'error', err: testErr });
+    stream.push(mkErr(testErr));
     stream.end();
     return stream;
   };
@@ -106,34 +107,34 @@ test(6, 'withResource', assert => {
       okSetup,
       okTeardown,
       expectsNothing,
-      [{ type: 'pass', msg: 'true, woo' }]),
+      [{ type: 'pass', msg: 'woo' }]),
     expectStream('Check injected resource',
       okSetup,
       okTeardown,
       expects42,
-      [{ type: 'pass', msg: '42, 42' }]),
+      [{ type: 'pass', msg: 42 }]),
     expectStream('failing testFn streams a failure',
       okSetup,
       okTeardown,
       fails,
-      [{ type: 'error', err: testErr }]),
+      [mkErr(testErr)]),
     expectStream('failing setup',
       failSetup,
       okTeardown,
       expects42,
-      [{ type: 'error', err: setupErr }]),
+      [mkErr(setupErr)]),
     expectStream('failing teardown',
       okSetup,
       failTeardown,
       expects42,
-      [ { type: 'pass', msg: '42, 42' },
-        { type: 'error', err: teardownErr } ]),
+      [ { type: 'pass', msg: 42 },
+        mkErr(teardownErr) ]),
     expectStream('failing test: teardown still runs',
       okSetup,
       failTeardown,
       fails,
-      [ { type: 'error', err: testErr },
-        { type: 'error', err: teardownErr } ]),
+      [ mkErr(testErr),
+        mkErr(teardownErr) ]),
   ]);
 });
 

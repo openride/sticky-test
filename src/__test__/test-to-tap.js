@@ -4,6 +4,7 @@
 const assert = require('assert');
 const through2 = require('through2');
 const toTAP = require('../to-tap');
+const mkErr = require('../stream-obj').mkErr;
 
 
 const expect = (description, inputs, expected) => {
@@ -75,7 +76,7 @@ ok 1 should pass
 
 
 expect('One failing test', [
-  { type: 'error', err: new Error('Bad times') },
+  mkErr(new Error('Bad times')),
 ], `
 TAP version 13
 not ok 1 Error: Bad times
@@ -105,7 +106,7 @@ ok 1 should pass
 
 expect('One failing test with a diagnostic', [
   { type: 'diagnostic', msg: 'Hello' },
-  { type: 'error', err: new Error('Bad times') },
+  mkErr(new Error('Bad times')),
 ], `
 TAP version 13
 
@@ -128,7 +129,7 @@ try {
 }
 expect('One failing test with a diagnostic', [
   { type: 'diagnostic', msg: 'Hello' },
-  { type: 'error', err: ne12 },
+  mkErr(ne12),
 ], `
 TAP version 13
 
@@ -138,8 +139,8 @@ not ok 1 AssertionError: 1 == 2
     name: AssertionError
     actual: 1
     expected: 2
-    operator: ==
-    message: 1 == 2
+    operator: '=='
+    message: '1 == 2'
     generatedMessage: true
   ...
 
@@ -152,7 +153,7 @@ not ok 1 AssertionError: 1 == 2
 expect('All together now', [
   { type: 'diagnostic', msg: 'Hello' },
   { type: 'pass', msg: 'should pass' },
-  { type: 'error', err: new Error('Bad times') },
+  mkErr(new Error('Bad times')),
   { type: 'diagnostic', msg: 'Goodbye' },
   { type: 'pass', msg: 'last one' },
 ], `

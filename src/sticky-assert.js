@@ -2,73 +2,34 @@
 
 const assert = require('assert');
 
-
-/**
- * Layer an array of wrapper functions
- * @param {func[]} funcs An array of functions to layer
- * @param {func} fn The inner-most function
- * @returns {func} The wrapped-up function
- */
-const wrap = funcs => fn =>
-  funcs.reduceRight((inner, nextWrapper) => nextWrapper(inner), fn);
-
-
-/**
- * Wrap a function, catch its AssertionErrors, sending them to a callback
- * @param {func} onFail A function to give any AssertionError we catch
- * @param {func} fn The function to wrap
- * @returns {any} The wrapped function, basically a proxy
- */
-const interceptThrow = onFail => fn => function(/*arguments*/) {
+const intercept = (fn, tell) => function(/*arguments*/) {
+  const description = arguments[arguments.length - 1];
   try {
-    return fn.apply(null, arguments);
+    fn.apply(null, arguments);
+    tell(true, description);
   } catch (err) {
-    if (err instanceof assert.AssertionError) {
-      onFail(err);
-    } else {
-      throw err;
-    }
+    tell(false, description, err);
   }
 };
 
 
 /**
- * Wrap a function and notify a callback whenever it is called.
- * @param {func} sideCb A callback to do some side-effect whenever the wrapped
- * function is called
- * @param {func} fn The function to wrap.
- * @returns {func} The wrapped function, basically a proxy
- */
-const spyOnCalls = sideCb => fn => function(/*arguments*/) {
-  sideCb(Array.prototype.slice.apply(arguments));
-  return fn.apply(null, arguments);
-};
-
-
-/**
  * Wrap the assert API and call callback whenever it's used
- * @param {func} notifyCb The notifier callback
- * @param {func} onFail A callback to handle failed assertions
+ * @param {func} onAssert A callback to handle assert calls
  * @returns {func} nodejs's assert API, wrapped.
  */
-const stickyAssert = (notifyCb, onFail) => {
-  const wrapper = wrap([
-    interceptThrow(onFail),
-    spyOnCalls(notifyCb),
-  ]);
-  const wrappedAssert = wrapper(assert);
+const stickyAssert = onAssert => {
+  const wrappedAssert = intercept(assert, onAssert);
   Object.keys(assert)
     .filter(prop => typeof assert[prop] === 'function')
     .forEach(prop => {
-      wrappedAssert[prop] = wrapper(assert[prop]);
+      wrappedAssert[prop] = intercept(assert[prop], onAssert);
     });
   wrappedAssert.AssertionError = assert.AssertionError;
-  wrappedAssert.ifError = (test, message) =>
-    wrappedAssert.ok(!test, message);
   wrappedAssert.pass = msg =>
-    wrappedAssert.ok(true, msg);
+    onAssert(true, msg);
   wrappedAssert.fail = msg =>
-    wrappedAssert.ok(false, msg);
+    onAssert(false, msg);
   return wrappedAssert;
 };
 

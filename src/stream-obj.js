@@ -7,9 +7,10 @@ const mkDiag = msg => ({
 });
 
 
-const mkErr = err => ({
+const mkErr = (err, msg) => ({
   type: 'error',
   err,
+  msg: msg || String(err),
 });
 
 
