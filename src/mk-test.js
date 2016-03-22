@@ -1,7 +1,7 @@
 'use strict';
 
 const through2 = require('through2');
-const mkErr = require('./stream-obj.js');
+const mkErr = require('./stream-obj.js').mkErr;
 
 
 const mkTest = testFn => function(/*arguments*/) {
