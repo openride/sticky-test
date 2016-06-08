@@ -37,6 +37,13 @@ const toTAP = () => {
           .filter(line => line.trim() !== '')
           .map(line => `    ${line}`)
           .forEach(indented => this.push(indented));
+        if (chunk.err && chunk.err.stack) {
+          String(chunk.err.stack)
+            .split('\n')
+            .filter(line => line.trim() !== '')
+            .map(line => `    | ${line}`)
+            .forEach(indented => this.push(indented));
+        }
         this.push('  ...');
       } else {
         throw new Error(`Unrecognized chunk type: '${chunk.type}'`);
